@@ -1,11 +1,41 @@
 import { useState } from 'react';
 import { Button } from '../components/ui';
-import { DemandList } from '../components/demands/DemandList';
+import { DemandList, DemandFilters } from '../components/demands';
+import { DemandForm } from '../components/forms';
 import { useDemands } from '../hooks/useDemands';
+import { useProviders } from '../hooks/useProviders';
+import type { DemandFormData } from '../types';
 
 const Demands = () => {
   const [showForm, setShowForm] = useState(false);
-  const { demands, loading, error } = useDemands();
+  const { demands, loading, error, createDemand, updateFilters } = useDemands();
+  const { providers } = useProviders();
+  const [formLoading, setFormLoading] = useState(false);
+
+  const handleCreateDemand = async (demandData: DemandFormData) => {
+    setFormLoading(true);
+    try {
+      await createDemand(demandData);
+      setShowForm(false);
+    } catch (err) {
+      console.error('Failed to create demand:', err);
+    } finally {
+      setFormLoading(false);
+    }
+  };
+
+  const handleFilter = (filters: any) => {
+    updateFilters(filters);
+  };
+
+  const handleClearFilters = () => {
+    updateFilters({
+      search: '',
+      status: '',
+      type: '',
+      providerId: '',
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -21,7 +51,19 @@ const Demands = () => {
           <p className="text-red-800">{error}</p>
         </div>
       )}
+
+      <DemandFilters
+        providers={providers}
+        onFilter={handleFilter}
+        onClear={handleClearFilters}
+      />
       
+      <div className="flex justify-between items-center text-sm text-gray-600">
+        <span>
+          Showing {demands.length} demand{demands.length !== 1 ? 's' : ''}
+        </span>
+      </div>
+
       <DemandList demands={demands} loading={loading} />
 
       {showForm && (
@@ -29,15 +71,12 @@ const Demands = () => {
           <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Create New Demand</h2>
-              <p className="text-gray-600 mb-4">Demand form will be implemented here.</p>
-              <div className="flex justify-end space-x-3">
-                <Button variant="secondary" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setShowForm(false)}>
-                  Create Demand
-                </Button>
-              </div>
+              <DemandForm
+                onSubmit={handleCreateDemand}
+                onCancel={() => setShowForm(false)}
+                providers={providers}
+                loading={formLoading}
+              />
             </div>
           </div>
         </div>
