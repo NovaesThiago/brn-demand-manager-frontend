@@ -33,9 +33,8 @@ export const useExport = () => {
       Description: demand.description,
       Type: demand.type,
       Status: demand.status,
-      Provider: demand.provider?.tradeName || 'Unknown',
+      Provider: demand.provider?.name || 'Unknown',
       'Created Date': new Date(demand.createdAt).toLocaleDateString(),
-      'Last Updated': new Date(demand.updatedAt).toLocaleDateString(),
     }));
 
     exportToCSV(exportData, 'demands');
@@ -43,8 +42,8 @@ export const useExport = () => {
 
   const exportProviders = (providers: Provider[]) => {
     const exportData = providers.map(provider => ({
-      'Trade Name': provider.tradeName,
-      'Responsible Person': provider.responsiblePerson,
+      'Trade Name': provider.name,
+      'Responsible Person': provider.responsible || 'N/A',
       'Contact': provider.contact,
       'Created Date': new Date(provider.createdAt).toLocaleDateString(),
     }));

@@ -37,12 +37,12 @@ export const TechnicalActionsList = ({ actions, loading = false }: TechnicalActi
       {actions.map(action => (
         <Card key={action.id} hover>
           <div className="flex justify-between items-start mb-3">
-            <h4 className="font-semibold text-gray-900">{action.technicianName}</h4>
+            <h4 className="font-semibold text-gray-900">{action.technician}</h4>
             <span className="text-sm text-gray-500">
-              {new Date(action.executedAt).toLocaleDateString('pt-BR')}
+              {new Date(action.createdAt).toLocaleDateString('pt-BR')}
             </span>
           </div>
-          <p className="text-gray-700 whitespace-pre-line">{action.description}</p>
+          <p className="text-gray-700 whitespace-pre-line">{action.label}</p>
         </Card>
       ))}
     </div>

@@ -9,17 +9,18 @@ interface DemandListProps {
 
 export const DemandList = ({ demands, loading = false }: DemandListProps) => {
   const statusColors = {
-    Pendente: 'bg-yellow-100 text-yellow-800',
-    'Em Andamento': 'bg-blue-100 text-blue-800',
-    Concluída: 'bg-green-100 text-green-800',
+    PENDENTE: 'bg-yellow-100 text-yellow-800',
+    EM_ANDAMENTO: 'bg-blue-100 text-blue-800',
+    CONCLUIDA: 'bg-green-100 text-green-800',
+    CANCELADA: 'bg-red-100 text-red-800',
   };
 
   const typeColors = {
-    Diagnóstico: 'bg-purple-100 text-purple-800',
-    Manutenção: 'bg-orange-100 text-orange-800',
-    Configuração: 'bg-indigo-100 text-indigo-800',
-    Instalação: 'bg-teal-100 text-teal-800',
-    Outro: 'bg-gray-100 text-gray-800',
+    DIAGNOSTICO: 'bg-purple-100 text-purple-800',
+    MANUTENCAO: 'bg-orange-100 text-orange-800',
+    CONFIGURACAO: 'bg-indigo-100 text-indigo-800',
+    INSTALACAO: 'bg-teal-100 text-teal-800',
+    OUTRO: 'bg-gray-100 text-gray-800',
   };
 
   if (loading) {
@@ -79,7 +80,7 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-500">
                 Provider: <span className="font-medium text-[#4169E1]">
-                  {demand.provider?.tradeName || 'Unknown'}
+                  {demand.provider?.name || 'Unknown'}
                 </span>
               </span>
               <span className="text-gray-400">

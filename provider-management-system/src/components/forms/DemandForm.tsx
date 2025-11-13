@@ -67,15 +67,7 @@ const handleSubmit = (e: React.FormEvent) => {
     }
   };
 
-  const demandTypeIcons = {
-    DIAGNOSTICO: '🔍',
-    MANUTENCAO: '🛠️',
-    CONFIGURACAO: '⚙️',
-    INSTALACAO: '📡',
-    OUTRO: '📄'
-  };
-
-  return (
+ return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection 
         title="Detalhes da Demanda" 
@@ -128,10 +120,7 @@ const handleSubmit = (e: React.FormEvent) => {
               name="type"
               value={formData.type}
               onChange={handleChange}
-              options={DEMAND_TYPE_OPTIONS.map(option => ({
-                ...option,
-                label: `${demandTypeIcons[option.value as keyof typeof demandTypeIcons]} ${option.label}`
-              }))}
+              options={DEMAND_TYPE_OPTIONS}
               disabled={loading}
             />
           </FormField>
