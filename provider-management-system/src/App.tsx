@@ -1,8 +1,8 @@
-import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
 import Demands from './pages/Demands';
+import DemandDetails from './pages/DemandDetails';
 import Providers from './pages/Providers';
 import './index.css';
 
@@ -15,6 +15,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/demands" element={<Demands />} />
+            <Route path="/demands/:id" element={<DemandDetails />} />
             <Route path="/providers" element={<Providers />} />
           </Routes>
         </main>

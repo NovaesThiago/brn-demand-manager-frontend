@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import type { Demand } from '../../types';
 import { Card } from '../ui';
 
@@ -51,36 +52,42 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
   return (
     <div className="space-y-4">
       {demands.map(demand => (
-        <Card key={demand.id} hover>
-          <div className="flex justify-between items-start mb-3">
-            <h3 className="text-lg font-semibold text-gray-900 flex-1 pr-4">
-              {demand.title}
-            </h3>
-            <div className="flex space-x-2 flex-shrink-0">
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${typeColors[demand.type]}`}>
-                {demand.type}
+        <Link 
+          key={demand.id} 
+          to={`/demands/${demand.id}`}
+          className="block" // Importante para o Link se comportar como block
+        >
+          <Card hover className="cursor-pointer transition-all hover:scale-[1.02]">
+            <div className="flex justify-between items-start mb-3">
+              <h3 className="text-lg font-semibold text-gray-900 flex-1 pr-4">
+                {demand.title}
+              </h3>
+              <div className="flex space-x-2 flex-shrink-0">
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${typeColors[demand.type]}`}>
+                  {demand.type}
+                </span>
+                <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[demand.status]}`}>
+                  {demand.status}
+                </span>
+              </div>
+            </div>
+            
+            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+              {demand.description}
+            </p>
+            
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-500">
+                Provider: <span className="font-medium text-[#4169E1]">
+                  {demand.provider?.tradeName || 'Unknown'}
+                </span>
               </span>
-              <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[demand.status]}`}>
-                {demand.status}
+              <span className="text-gray-400">
+                {new Date(demand.createdAt).toLocaleDateString()}
               </span>
             </div>
-          </div>
-          
-          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
-            {demand.description}
-          </p>
-          
-          <div className="flex justify-between items-center text-sm">
-            <span className="text-gray-500">
-              Provider: <span className="font-medium text-[#4169E1]">
-                {demand.provider?.tradeName || 'Unknown'}
-              </span>
-            </span>
-            <span className="text-gray-400">
-              {new Date(demand.createdAt).toLocaleDateString()}
-            </span>
-          </div>
-        </Card>
+          </Card>
+        </Link>
       ))}
     </div>
   );
