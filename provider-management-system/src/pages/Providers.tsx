@@ -1,11 +1,26 @@
 import { useState } from 'react';
 import { Button } from '../components/ui';
 import { ProviderList } from '../components/providers';
+import { ProviderForm } from '../components/forms';
 import { useProviders } from '../hooks/useProviders';
+import type { ProviderFormData } from '../types';
 
 const Providers = () => {
   const [showForm, setShowForm] = useState(false);
-  const { providers, loading, error } = useProviders();
+  const { providers, loading, error, createProvider } = useProviders();
+  const [formLoading, setFormLoading] = useState(false);
+
+  const handleCreateProvider = async (providerData: ProviderFormData) => {
+    setFormLoading(true);
+    try {
+      await createProvider(providerData);
+      setShowForm(false);
+    } catch (err) {
+      console.error('Failed to create provider:', err);
+    } finally {
+      setFormLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -29,15 +44,11 @@ const Providers = () => {
           <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Provider</h2>
-              <p className="text-gray-600 mb-4">Provider form will be implemented here.</p>
-              <div className="flex justify-end space-x-3">
-                <Button variant="secondary" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={() => setShowForm(false)}>
-                  Create Provider
-                </Button>
-              </div>
+              <ProviderForm
+                onSubmit={handleCreateProvider}
+                onCancel={() => setShowForm(false)}
+                loading={formLoading}
+              />
             </div>
           </div>
         </div>
