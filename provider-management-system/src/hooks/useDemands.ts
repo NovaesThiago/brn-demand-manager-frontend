@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import type { Demand, DemandFormData } from '../types';
 import { demandsService } from '../services/demands';
 import { useDebounce } from './useDebounce';
+import { useNotification } from '../contexts/NotificationContext';
 
 export const useDemands = () => {
   const [demands, setDemands] = useState<Demand[]>([]);
@@ -15,6 +16,7 @@ export const useDemands = () => {
   });
 
   const debouncedSearch = useDebounce(filters.search, 300);
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     loadDemands();
@@ -42,6 +44,11 @@ export const useDemands = () => {
       setDemands(data);
     } catch (err) {
       setError('Failed to load demands');
+      addNotification({
+        type: 'error',
+        title: 'Error loading demands',
+        message: 'Please try refreshing the page.'
+      });
       console.error(err);
     } finally {
       setLoading(false);
@@ -52,9 +59,20 @@ export const useDemands = () => {
     try {
       const newDemand = await demandsService.create(demandData);
       setDemands(prev => [newDemand, ...prev]);
+      addNotification({
+        type: 'success',
+        title: 'Demand created successfully!',
+        message: `${demandData.title} has been added.`
+      });
       return newDemand;
     } catch (err) {
-      setError('Failed to create demand');
+      const errorMsg = 'Failed to create demand';
+      setError(errorMsg);
+      addNotification({
+        type: 'error',
+        title: 'Error creating demand',
+        message: 'Please try again.'
+      });
       throw err;
     }
   };
@@ -67,9 +85,19 @@ export const useDemands = () => {
           demand.id === id ? updatedDemand : demand
         )
       );
+      addNotification({
+        type: 'success',
+        title: 'Demand updated successfully!'
+      });
       return updatedDemand;
     } catch (err) {
-      setError('Failed to update demand');
+      const errorMsg = 'Failed to update demand';
+      setError(errorMsg);
+      addNotification({
+        type: 'error',
+        title: 'Error updating demand',
+        message: 'Please try again.'
+      });
       throw err;
     }
   };
