@@ -1,7 +1,10 @@
 import { useState } from 'react';
 import type { DemandFormData, Provider } from '../../types';
 import { Input, Textarea, Select, Button } from '../ui';
+import { FormField} from '../ui/FormField';
+import { FormSection } from '../ui/FormSection';
 import { DEMAND_STATUS_OPTIONS, DEMAND_TYPE_OPTIONS } from '../../utils/constants';
+import { FileText, AlertCircle, User, Building2 } from 'lucide-react';
 
 interface DemandFormProps {
   onSubmit: (data: DemandFormData) => void;
@@ -33,11 +36,10 @@ export const DemandForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validação
     const newErrors: Partial<DemandFormData> = {};
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.description.trim()) newErrors.description = 'Description is required';
-    if (!formData.providerId) newErrors.providerId = 'Provider is required';
+    if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
+    if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
+    if (!formData.providerId) newErrors.providerId = 'Provedor é obrigatório';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -53,82 +55,142 @@ export const DemandForm = ({
   ) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user starts typing
     if (errors[name as keyof DemandFormData]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
+  const demandTypeIcons = {
+    Diagnóstico: '🔍',
+    Manutenção: '🛠️',
+    Configuração: '⚙️',
+    Instalação: '📡',
+    Outro: '📄'
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Input
-        label="Title *"
-        name="title"
-        value={formData.title}
-        onChange={handleChange}
-        error={errors.title}
-        placeholder="e.g., Network Latency Analysis"
-        disabled={loading}
-      />
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <FormSection 
+        title="Detalhes da Demanda" 
+        description="Informações principais sobre a solicitação técnica"
+      >
+        <FormField 
+          label="Título da Demanda" 
+          required 
+          error={errors.title}
+          helpText="Descreva brevemente o problema ou solicitação"
+        >
+          <div className="relative">
+            <FileText className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="ex: Análise de Lentidão na Rede Borda"
+              disabled={loading}
+              className="pl-10"
+            />
+          </div>
+        </FormField>
 
-      <Textarea
-        label="Description *"
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        error={errors.description}
-        placeholder="Detailed description of the technical demand..."
-        rows={4}
-        disabled={loading}
-      />
+        <FormField 
+          label="Descrição Detalhada" 
+          required 
+          error={errors.description}
+          helpText="Descreva todos os detalhes técnicos necessários"
+        >
+          <div className="relative">
+            <AlertCircle className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
+            <Textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              placeholder="Descreva o problema, sintomas, equipamentos envolvidos, horários de ocorrência..."
+              rows={5}
+              disabled={loading}
+              className="pl-10 resize-none"
+            />
+          </div>
+        </FormField>
+      </FormSection>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Select
-          label="Type *"
-          name="type"
-          value={formData.type}
-          onChange={handleChange}
-          options={DEMAND_TYPE_OPTIONS}
-          disabled={loading}
-        />
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <FormSection title="Classificação">
+          <FormField label="Tipo de Demanda" required>
+            <Select
+              name="type"
+              value={formData.type}
+              onChange={handleChange}
+              options={DEMAND_TYPE_OPTIONS.map(option => ({
+                ...option,
+                label: `${demandTypeIcons[option.value as keyof typeof demandTypeIcons]} ${option.label}`
+              }))}
+              disabled={loading}
+            />
+          </FormField>
 
-        <Select
-          label="Status *"
-          name="status"
-          value={formData.status}
-          onChange={handleChange}
-          options={DEMAND_STATUS_OPTIONS}
-          disabled={loading}
-        />
+          <FormField label="Status" required>
+            <Select
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              options={DEMAND_STATUS_OPTIONS}
+              disabled={loading}
+            />
+          </FormField>
+        </FormSection>
+
+        <FormSection title="Provedor">
+          <FormField 
+            label="Provedor Responsável" 
+            required 
+            error={errors.providerId}
+            helpText="Selecione o provedor relacionado a esta demanda"
+          >
+            <div className="relative">
+              <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
+              <Select
+                name="providerId"
+                value={formData.providerId}
+                onChange={handleChange}
+                options={[
+                  { value: '', label: 'Selecione um provedor' },
+                  ...providers.map(p => ({
+                    value: p.id,
+                    label: p.tradeName
+                  }))
+                ]}
+                disabled={loading}
+                className="pl-10"
+              />
+            </div>
+          </FormField>
+        </FormSection>
       </div>
 
-      <Select
-        label="Provider *"
-        name="providerId"
-        value={formData.providerId}
-        onChange={handleChange}
-        error={errors.providerId}
-        options={providers.map(provider => ({
-          value: provider.id,
-          label: provider.tradeName
-        }))}
-        disabled={loading}
-      />
-
-      <div className="flex justify-end space-x-3 pt-4">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
         <Button
           type="button"
           variant="secondary"
           onClick={onCancel}
           disabled={loading}
+          className="min-w-24"
         >
-          Cancel
+          Cancelar
         </Button>
         <Button
           type="submit"
           disabled={loading}
+          className="min-w-24"
         >
-          {loading ? 'Saving...' : (initialData ? 'Update' : 'Create')} Demand
+          {loading ? (
+            <div className="flex items-center space-x-2">
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span>Salvando...</span>
+            </div>
+          ) : (
+            initialData ? 'Atualizar' : 'Criar Demanda'
+          )}
         </Button>
       </div>
     </form>
