@@ -1,11 +1,9 @@
 import axios from 'axios';
 
 // Em desenvolvimento usa o proxy, em produção usa a URL direta
-const API_BASE_URL = import.meta.env.DEV 
-  ? '/api'  // ← Proxy Vite redireciona para o backend
-  : 'https://brn-demand-manager-backend-production.up.railway.app';
+const API_BASE_URL = 'https://brn-demand-manager-backend-production.up.railway.app';
 
-console.log('🔗 API Base URL:', API_BASE_URL);
+console.log('API Base URL:', API_BASE_URL);
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
