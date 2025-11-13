@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import type { Provider, ProviderFormData } from '../types';
 import { providersService } from '../services/providers';
+import { useNotification } from '../contexts/NotificationContext';
 
 export const useProviders = () => {
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const { addNotification } = useNotification();
 
   useEffect(() => {
     loadProviders();
@@ -28,9 +30,20 @@ export const useProviders = () => {
     try {
       const newProvider = await providersService.create(providerData);
       setProviders(prev => [newProvider, ...prev]);
+      addNotification({
+        type: 'success',
+        title: 'Provider created successfully!',
+        message: `${providerData.tradeName} has been added to the system.`
+      });
       return newProvider;
     } catch (err) {
-      setError('Failed to create provider');
+      const errorMsg = 'Failed to create provider';
+      setError(errorMsg);
+      addNotification({
+        type: 'error',
+        title: 'Error creating provider',
+        message: 'Please try again.'
+      });
       throw err;
     }
   };
@@ -43,9 +56,19 @@ export const useProviders = () => {
           provider.id === id ? updatedProvider : provider
         )
       );
+      addNotification({
+        type: 'success',
+        title: 'Provider updated successfully!'
+      });
       return updatedProvider;
     } catch (err) {
-      setError('Failed to update provider');
+      const errorMsg = 'Failed to update provider';
+      setError(errorMsg);
+      addNotification({
+        type: 'error',
+        title: 'Error updating provider',
+        message: 'Please try again.'
+      });
       throw err;
     }
   };
