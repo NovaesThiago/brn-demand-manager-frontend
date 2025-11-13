@@ -18,7 +18,11 @@ export const demandsService = {
   },
 
   async update(id: string, data: Partial<Demand>): Promise<Demand> {
-    const response = await api.post(`/demands/${id}`, data);
+    const response = await api.put(`/demands/${id}`, data);
     return response.data;
+  },
+
+  async delete(id: string): Promise<void> {
+    await api.delete(`/demands/${id}`);
   }
 };

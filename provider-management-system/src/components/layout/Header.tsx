@@ -1,8 +1,9 @@
-import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useApiHealth } from '../../hooks/useApiHealth';
 
-const Header: React.FC = () => {
+const Header = () => {
   const location = useLocation();
+  const { isOnline, loading } = useApiHealth();
 
   const navigation = [
     { name: 'Dashboard', href: '/' },
@@ -33,6 +34,22 @@ const Header: React.FC = () => {
                 </Link>
               ))}
             </nav>
+          </div>
+
+          {/* Status do Backend */}
+          <div className="flex items-center space-x-2">
+            {!loading && (
+              <div className="flex items-center space-x-1 text-sm">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    isOnline ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+                />
+                <span className="text-gray-600">
+                  Backend: {isOnline ? 'Online' : 'Offline'}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -1,65 +1,59 @@
-// Simulação de API - depois substituímos por axios
-export const api = {
-  async get(url: string): Promise<any> {
-    // Simula delay de rede
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Mock data
-    if (url === '/providers') {
-      return {
-        data: [
-          {
-            id: '1',
-            tradeName: 'BRNX Fibra',
-            responsiblePerson: 'João Silva',
-            contact: 'joao@brnxfibra.com.br\n(11) 99999-9999',
-            createdAt: '2024-01-01T00:00:00Z',
-            updatedAt: '2024-01-01T00:00:00Z'
-          },
-          {
-            id: '2', 
-            tradeName: 'NetVeloz',
-            responsiblePerson: 'Maria Santos',
-            contact: 'maria@netveloz.com.br\n(11) 88888-8888',
-            createdAt: '2024-01-02T00:00:00Z',
-            updatedAt: '2024-01-02T00:00:00Z'
-          }
-        ]
-      };
-    }
-    
-    if (url === '/demands') {
-      return {
-        data: [
-          {
-            id: '1',
-            title: 'Análise de Lentidão na Rede',
-            description: 'Investigar problemas de latência reportados por clientes na região central',
-            type: 'Diagnóstico',
-            status: 'Em Andamento',
-            providerId: '1',
-            createdAt: '2024-01-15T10:00:00Z',
-            updatedAt: '2024-01-15T10:00:00Z'
-          },
-          {
-            id: '2',
-            title: 'Atualização de Configuração BGP',
-            description: 'Configurar novo peering com provedor internacional',
-            type: 'Configuração', 
-            status: 'Pendente',
-            providerId: '2',
-            createdAt: '2024-01-16T14:30:00Z',
-            updatedAt: '2024-01-16T14:30:00Z'
-          }
-        ]
-      };
-    }
-    
-    return { data: [] };
+import axios from 'axios';
+
+// URL base da API - usa variável de ambiente ou fallback
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+
+console.log('API Base URL:', API_BASE_URL); // Para debug
+
+export const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
   },
-  
-  async post(url: string, data: any): Promise<any> {
-    await new Promise(resolve => setTimeout(resolve, 500));
-    return { data: { ...data, id: Date.now().toString(), createdAt: new Date().toISOString() } };
+  timeout: 15000, // 15 segundos para production
+});
+
+// Interceptor para requests
+api.interceptors.request.use(
+  (config) => {
+    console.log(`🔄 API Call: ${config.method?.toUpperCase()} ${config.url}`);
+    // Adicione tokens de autenticação aqui se necessário
+    // const token = localStorage.getItem('authToken');
+    // if (token) {
+    //   config.headers.Authorization = `Bearer ${token}`;
+    // }
+    return config;
+  },
+  (error) => {
+    console.error('❌ Request Error:', error);
+    return Promise.reject(error);
   }
-};
+);
+
+// Interceptor para responses
+api.interceptors.response.use(
+  (response) => {
+    console.log(`✅ API Success: ${response.status} ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    console.error('❌ API Error:', {
+      url: error.config?.url,
+      status: error.response?.status,
+      message: error.response?.data?.message || error.message
+    });
+    
+    // Tratamento de erros comum
+    if (error.response?.status === 401) {
+      // Redirecionar para login se não autorizado
+      console.warn('⚠️ Unauthorized access');
+      // window.location.href = '/login';
+    } else if (error.response?.status === 500) {
+      console.error('🚨 Server error:', error.response.data);
+    } else if (error.code === 'NETWORK_ERROR' || error.code === 'ECONNREFUSED') {
+      console.error('🌐 Network error - Backend might be down');
+    }
+    
+    return Promise.reject(error);
+  }
+);
