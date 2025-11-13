@@ -3,11 +3,15 @@ import { Button } from '../components/ui';
 import { ProviderList } from '../components/providers';
 import { ProviderForm } from '../components/forms';
 import { useProviders } from '../hooks/useProviders';
+import { useExport } from '../hooks/useExport';
+import { useNotification } from '../contexts/NotificationContext';
 import type { ProviderFormData } from '../types';
 
 const Providers = () => {
   const [showForm, setShowForm] = useState(false);
   const { providers, loading, error, createProvider } = useProviders();
+  const { exportProviders } = useExport();
+  const { addNotification } = useNotification();
   const [formLoading, setFormLoading] = useState(false);
 
   const handleCreateProvider = async (providerData: ProviderFormData) => {
@@ -22,13 +26,36 @@ const Providers = () => {
     }
   };
 
+  const handleExport = () => {
+    if (providers.length === 0) {
+      addNotification({
+        type: 'warning',
+        title: 'No data to export',
+        message: 'There are no providers to export.'
+      });
+      return;
+    }
+
+    exportProviders(providers);
+    addNotification({
+      type: 'success',
+      title: 'Export completed!',
+      message: 'Providers data has been exported to CSV.'
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Providers</h1>
-        <Button onClick={() => setShowForm(true)}>
-          Add Provider
-        </Button>
+        <div className="flex space-x-3">
+          <Button variant="secondary" onClick={handleExport}>
+            Export CSV
+          </Button>
+          <Button onClick={() => setShowForm(true)}>
+            Add Provider
+          </Button>
+        </div>
       </div>
 
       {error && (
