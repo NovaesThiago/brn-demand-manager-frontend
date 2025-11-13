@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { DemandStatus, DemandType, Provider } from '../../types';
+import type { Provider } from '../../types';
 import { Input, Select, Button } from '../ui';
 import { DEMAND_STATUS_OPTIONS, DEMAND_TYPE_OPTIONS } from '../../utils/constants';
 
