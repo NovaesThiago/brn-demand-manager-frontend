@@ -1,7 +1,7 @@
+import type { Provider } from './provider';
+
 export type DemandStatus = 'Pendente' | 'Em Andamento' | 'Concluída';
 export type DemandType = 'Diagnóstico' | 'Manutenção' | 'Configuração' | 'Instalação' | 'Outro';
-
-
 
 export interface Demand {
   id: string;
