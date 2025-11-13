@@ -1,9 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Header from '../components/layout/Header';
-import Dashboard from '../components/pages/Dashboard';
-import Demands from '../components/pages/Demands';
-import Providers from '../components/pages/Providers';
+import Header from './components/layout/Header';
+import Dashboard from './pages/Dashboard';
+import Demands from './pages/Demands';
+import Providers from './pages/Providers';
 import './index.css';
 
 function App() {
