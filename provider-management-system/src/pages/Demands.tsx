@@ -4,12 +4,16 @@ import { DemandList, DemandFilters } from '../components/demands';
 import { DemandForm } from '../components/forms';
 import { useDemands } from '../hooks/useDemands';
 import { useProviders } from '../hooks/useProviders';
+import { useExport } from '../hooks/useExport';
+import { useNotification } from '../contexts/NotificationContext';
 import type { DemandFormData } from '../types';
 
 const Demands = () => {
   const [showForm, setShowForm] = useState(false);
-  const { demands, loading, error, createDemand, updateFilters } = useDemands();
+  const { demands, allDemands, loading, error, createDemand, updateFilters } = useDemands();
   const { providers } = useProviders();
+  const { exportDemands } = useExport();
+  const { addNotification } = useNotification();
   const [formLoading, setFormLoading] = useState(false);
 
   const handleCreateDemand = async (demandData: DemandFormData) => {
@@ -17,6 +21,11 @@ const Demands = () => {
     try {
       await createDemand(demandData);
       setShowForm(false);
+      addNotification({
+        type: 'success',
+        title: 'Demand created successfully!',
+        message: `${demandData.title} has been added.`
+      });
     } catch (err) {
       console.error('Failed to create demand:', err);
     } finally {
@@ -37,13 +46,36 @@ const Demands = () => {
     });
   };
 
+  const handleExport = () => {
+    if (allDemands.length === 0) {
+      addNotification({
+        type: 'warning',
+        title: 'No data to export',
+        message: 'There are no demands to export.'
+      });
+      return;
+    }
+
+    exportDemands(allDemands);
+    addNotification({
+      type: 'success',
+      title: 'Export completed!',
+      message: 'Demands data has been exported to CSV.'
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Technical Demands</h1>
-        <Button onClick={() => setShowForm(true)}>
-          Create Demand
-        </Button>
+        <div className="flex space-x-3">
+          <Button variant="secondary" onClick={handleExport}>
+            Export CSV
+          </Button>
+          <Button onClick={() => setShowForm(true)}>
+            Create Demand
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -61,6 +93,7 @@ const Demands = () => {
       <div className="flex justify-between items-center text-sm text-gray-600">
         <span>
           Showing {demands.length} demand{demands.length !== 1 ? 's' : ''}
+          {demands.length !== allDemands.length && ` (filtered from ${allDemands.length} total)`}
         </span>
       </div>
 
