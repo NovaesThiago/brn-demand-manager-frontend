@@ -1,8 +1,11 @@
 import { useState } from 'react';
-import { Card, Button } from '../components/ui';
+import { Button } from '../components/ui';
+import { DemandList } from '../components/demands/DemandList';
+import { useDemands } from '../hooks/useDemands';
 
 const Demands = () => {
   const [showForm, setShowForm] = useState(false);
+  const { demands, loading, error } = useDemands();
 
   return (
     <div className="space-y-6">
@@ -12,33 +15,32 @@ const Demands = () => {
           Create Demand
         </Button>
       </div>
-      
-      <Card>
-        <div className="text-center py-8">
-          <p className="text-gray-600">Demands list will be displayed here.</p>
-          <Button 
-            variant="secondary" 
-            className="mt-4"
-            onClick={() => setShowForm(true)}
-          >
-            Create First Demand
-          </Button>
+
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-md p-4">
+          <p className="text-red-800">{error}</p>
         </div>
-      </Card>
+      )}
+      
+      <DemandList demands={demands} loading={loading} />
 
       {showForm && (
-        <Card className="mt-6">
-          <h2 className="text-xl font-semibold mb-4">Create New Demand</h2>
-          <p className="text-gray-600">Demand form will be implemented here.</p>
-          <div className="flex justify-end space-x-3 mt-6">
-            <Button variant="secondary" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-            <Button onClick={() => setShowForm(false)}>
-              Create Demand
-            </Button>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Create New Demand</h2>
+              <p className="text-gray-600 mb-4">Demand form will be implemented here.</p>
+              <div className="flex justify-end space-x-3">
+                <Button variant="secondary" onClick={() => setShowForm(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={() => setShowForm(false)}>
+                  Create Demand
+                </Button>
+              </div>
+            </div>
           </div>
-        </Card>
+        </div>
       )}
     </div>
   );
