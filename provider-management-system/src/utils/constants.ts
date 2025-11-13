@@ -1,13 +1,14 @@
 export const DEMAND_STATUS_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'Pendente', label: 'Pendente' },
-  { value: 'Em Andamento', label: 'Em Andamento' },
-  { value: 'Concluída', label: 'Concluída' },
+  { value: 'PENDENTE', label: 'Pendente' },
+  { value: 'EM_ANDAMENTO', label: 'Em Andamento' },
+  { value: 'CONCLUIDA', label: 'Concluída' },
+  { value: 'CANCELADA', label: 'Cancelada' },
 ];
 
 export const DEMAND_TYPE_OPTIONS: Array<{ value: string; label: string }> = [
-  { value: 'Diagnóstico', label: 'Diagnóstico' },
-  { value: 'Manutenção', label: 'Manutenção' },
-  { value: 'Configuração', label: 'Configuração' },
-  { value: 'Instalação', label: 'Instalação' },
-  { value: 'Outro', label: 'Outro' },
+  { value: 'DIAGNOSTICO', label: 'Diagnóstico' },
+  { value: 'MANUTENCAO', label: 'Manutenção' },
+  { value: 'CONFIGURACAO', label: 'Configuração' },
+  { value: 'INSTALACAO', label: 'Instalação' },
+  { value: 'OUTRO', label: 'Outro' },
 ];

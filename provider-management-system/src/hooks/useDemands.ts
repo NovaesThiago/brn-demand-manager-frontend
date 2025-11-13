@@ -27,11 +27,13 @@ export const useDemands = () => {
       const matchesSearch = !debouncedSearch || 
         demand.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
         demand.description.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-        demand.provider?.tradeName.toLowerCase().includes(debouncedSearch.toLowerCase());
+        demand.provider?.name.toLowerCase().includes(debouncedSearch.toLowerCase());
 
       const matchesStatus = !filters.status || demand.status === filters.status;
       const matchesType = !filters.type || demand.type === filters.type;
-      const matchesProvider = !filters.providerId || demand.providerId === filters.providerId;
+      
+      // CORREÇÃO AQUI: Converter number para string antes de comparar
+      const matchesProvider = !filters.providerId || demand.providerId.toString() === filters.providerId;
 
       return matchesSearch && matchesStatus && matchesType && matchesProvider;
     });
@@ -77,7 +79,7 @@ export const useDemands = () => {
     }
   };
 
-  const updateDemand = async (id: string, demandData: Partial<Demand>) => {
+  const updateDemand = async (id: number, demandData: Partial<Demand>) => {
     try {
       const updatedDemand = await demandsService.update(id, demandData);
       setDemands(prev => 

@@ -9,7 +9,7 @@ interface DemandFiltersProps {
     search: string;
     status: string;
     type: string;
-    providerId: string;
+    providerId: string; // ← Mantém como string para o Select
   }) => void;
   onClear: () => void;
 }
@@ -71,7 +71,10 @@ export const DemandFilters = ({ providers, onFilter, onClear }: DemandFiltersPro
           onChange={(e) => handleFilterChange('providerId', e.target.value)}
           options={[
             { value: '', label: 'All Providers' },
-            ...providers.map(p => ({ value: p.id, label: p.tradeName }))
+            ...providers.map(p => ({ 
+              value: p.id.toString(), // ← CONVERTE number para string
+              label: p.name 
+            }))
           ]}
         />
 

@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import type { ProviderFormData } from '../../types';
-import { Input, Textarea, Button } from '../ui';
-import { FormField } from '../ui/FormField';
+import { Input, Button } from '../ui';
+import { FormField} from '../ui/FormField';
 import { FormSection } from '../ui/FormSection';
-import { Building2, User, Contact } from 'lucide-react';
+import { Building2, User, Mail, Phone } from 'lucide-react';
 
 interface ProviderFormProps {
   onSubmit: (data: ProviderFormData) => void;
@@ -20,9 +20,10 @@ export const ProviderForm = ({
 }: ProviderFormProps) => {
   const [formData, setFormData] = useState<ProviderFormData>(
     initialData || {
-      tradeName: '',
-      responsiblePerson: '',
-      contact: '',
+      name: '', // ← mudou de tradeName para name
+      email: '',
+      contact: '', // ← campo de contato (telefone)
+      responsible: '', // ← campo do responsável técnico
     }
   );
 
@@ -32,9 +33,13 @@ export const ProviderForm = ({
     e.preventDefault();
     
     const newErrors: Partial<ProviderFormData> = {};
-    if (!formData.tradeName.trim()) newErrors.tradeName = 'Nome fantasia é obrigatório';
-    if (!formData.responsiblePerson.trim()) newErrors.responsiblePerson = 'Responsável é obrigatório';
-    if (!formData.contact.trim()) newErrors.contact = 'Contato é obrigatório';
+    if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
+    if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
+
+    // Validação de email
+    if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Email inválido';
+    }
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -45,7 +50,7 @@ export const ProviderForm = ({
     onSubmit(formData);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     if (errors[name as keyof ProviderFormData]) {
@@ -56,20 +61,20 @@ export const ProviderForm = ({
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection 
-        title="Informações da Empresa" 
+        title="Informações do Provedor" 
         description="Dados principais do provedor de internet"
       >
         <FormField 
-          label="Nome Fantasia" 
+          label="Nome do Provedor" 
           required 
-          error={errors.tradeName}
-          helpText="Nome comercial da empresa"
+          error={errors.name}
+          helpText="Nome da empresa provedora"
         >
           <div className="relative">
             <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              name="tradeName"
-              value={formData.tradeName}
+              name="name"
+              value={formData.name}
               onChange={handleChange}
               placeholder="ex: BRNX Fibra"
               disabled={loading}
@@ -79,18 +84,19 @@ export const ProviderForm = ({
         </FormField>
 
         <FormField 
-          label="Responsável Técnico" 
+          label="Email" 
           required 
-          error={errors.responsiblePerson}
-          helpText="Pessoa responsável pelo contato técnico"
+          error={errors.email}
+          helpText="Email para contato"
         >
           <div className="relative">
-            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             <Input
-              name="responsiblePerson"
-              value={formData.responsiblePerson}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="ex: João Silva"
+              placeholder="ex: suporte@brnxfibra.com.br"
               disabled={loading}
               className="pl-10"
             />
@@ -99,25 +105,41 @@ export const ProviderForm = ({
       </FormSection>
 
       <FormSection 
-        title="Contato" 
-        description="Informações para contato técnico"
+        title="Informações Adicionais" 
+        description="Dados opcionais para contato"
       >
         <FormField 
-          label="Dados de Contato" 
-          required 
-          error={errors.contact}
-          helpText="Email, telefone, endereço - um por linha"
+          label="Responsável Técnico" 
+          error={errors.responsible}
+          helpText="Nome do responsável técnico (opcional)"
         >
           <div className="relative">
-            <Contact className="absolute left-3 top-3 text-gray-400 w-4 h-4" />
-            <Textarea
-              name="contact"
-              value={formData.contact}
+            <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              name="responsible"
+              value={formData.responsible || ''}
               onChange={handleChange}
-              placeholder={`joao@empresa.com.br\n(11) 99999-9999\nRua Exemplo, 123`}
-              rows={4}
+              placeholder="ex: João Silva"
               disabled={loading}
-              className="pl-10 resize-none"
+              className="pl-10"
+            />
+          </div>
+        </FormField>
+
+        <FormField 
+          label="Telefone de Contato" 
+          error={errors.contact}
+          helpText="Telefone para contato (opcional)"
+        >
+          <div className="relative">
+            <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              name="contact"
+              value={formData.contact || ''}
+              onChange={handleChange}
+              placeholder="ex: (11) 99999-9999"
+              disabled={loading}
+              className="pl-10"
             />
           </div>
         </FormField>

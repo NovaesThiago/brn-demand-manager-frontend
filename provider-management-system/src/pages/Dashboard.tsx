@@ -8,11 +8,12 @@ const Dashboard = () => {
   const { allDemands } = useDemands();
   const { providers } = useProviders();
 
+  // Usar os enums corretos do schema
   const stats = {
     totalDemands: allDemands.length,
-    pendingDemands: allDemands.filter(d => d.status === 'Pendente').length,
-    inProgressDemands: allDemands.filter(d => d.status === 'Em Andamento').length,
-    completedDemands: allDemands.filter(d => d.status === 'Concluída').length,
+    pendingDemands: allDemands.filter(d => d.status === 'PENDENTE').length,
+    inProgressDemands: allDemands.filter(d => d.status === 'EM_ANDAMENTO').length,
+    completedDemands: allDemands.filter(d => d.status === 'CONCLUIDA').length,
     totalProviders: providers.length,
   };
 
@@ -20,10 +21,28 @@ const Dashboard = () => {
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     .slice(0, 5);
 
+  // Mapeamento dos enums para ícones
   const statusIcons = {
-    Pendente: <Clock className="w-4 h-4 text-yellow-500" />,
-    'Em Andamento': <Wrench className="w-4 h-4 text-blue-500" />,
-    Concluída: <CheckCircle className="w-4 h-4 text-green-500" />,
+    PENDENTE: <Clock className="w-4 h-4 text-yellow-500" />,
+    EM_ANDAMENTO: <Wrench className="w-4 h-4 text-blue-500" />,
+    CONCLUIDA: <CheckCircle className="w-4 h-4 text-green-500" />,
+    CANCELADA: <AlertCircle className="w-4 h-4 text-red-500" />,
+  };
+
+  // Mapeamento dos enums para labels em português
+  const statusLabels = {
+    PENDENTE: 'Pendente',
+    EM_ANDAMENTO: 'Em Andamento',
+    CONCLUIDA: 'Concluída',
+    CANCELADA: 'Cancelada',
+  };
+
+  // Cores para os status
+  const statusColors = {
+    PENDENTE: 'bg-yellow-100 text-yellow-800',
+    EM_ANDAMENTO: 'bg-blue-100 text-blue-800',
+    CONCLUIDA: 'bg-green-100 text-green-800',
+    CANCELADA: 'bg-red-100 text-red-800',
   };
 
   return (
@@ -38,13 +57,13 @@ const Dashboard = () => {
           <Link to="/providers">
             <Button variant="secondary" className="flex items-center space-x-2">
               <Users className="w-4 h-4" />
-              <span>Providers</span>
+              <span>Provedores</span>
             </Button>
           </Link>
           <Link to="/demands">
             <Button className="flex items-center space-x-2">
               <Wrench className="w-4 h-4" />
-              <span>All Demands</span>
+              <span>Todas as Demandas</span>
             </Button>
           </Link>
         </div>
@@ -55,7 +74,7 @@ const Dashboard = () => {
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-600">Total Demands</p>
+              <p className="text-sm font-medium text-blue-600">Total de Demandas</p>
               <p className="text-2xl font-bold text-gray-900">{stats.totalDemands}</p>
             </div>
             <div className="bg-blue-500 p-3 rounded-lg">
@@ -67,7 +86,7 @@ const Dashboard = () => {
         <Card className="bg-gradient-to-br from-yellow-50 to-yellow-100 border-yellow-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-yellow-600">Pending</p>
+              <p className="text-sm font-medium text-yellow-600">Pendentes</p>
               <p className="text-2xl font-bold text-gray-900">{stats.pendingDemands}</p>
             </div>
             <div className="bg-yellow-500 p-3 rounded-lg">
@@ -79,7 +98,7 @@ const Dashboard = () => {
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-600">In Progress</p>
+              <p className="text-sm font-medium text-blue-600">Em Andamento</p>
               <p className="text-2xl font-bold text-gray-900">{stats.inProgressDemands}</p>
             </div>
             <div className="bg-blue-500 p-3 rounded-lg">
@@ -91,7 +110,7 @@ const Dashboard = () => {
         <Card className="bg-gradient-to-br from-green-50 to-green-100 border-green-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-green-600">Completed</p>
+              <p className="text-sm font-medium text-green-600">Concluídas</p>
               <p className="text-2xl font-bold text-gray-900">{stats.completedDemands}</p>
             </div>
             <div className="bg-green-500 p-3 rounded-lg">
@@ -105,9 +124,9 @@ const Dashboard = () => {
         {/* Recent Demands */}
         <Card>
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-gray-900">Recent Demands</h2>
+            <h2 className="text-xl font-bold text-gray-900">Demandas Recentes</h2>
             <Link to="/demands" className="text-[#4169E1] hover:text-[#3151B0] text-sm font-medium flex items-center space-x-1">
-              <span>View all</span>
+              <span>Ver todas</span>
               <TrendingUp className="w-4 h-4" />
             </Link>
           </div>
@@ -115,9 +134,9 @@ const Dashboard = () => {
           {recentDemands.length === 0 ? (
             <div className="text-center py-8">
               <AlertCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-600">No demands yet.</p>
+              <p className="text-gray-600">Nenhuma demanda ainda.</p>
               <Link to="/demands">
-                <Button className="mt-3">Create First Demand</Button>
+                <Button className="mt-3">Criar Primeira Demanda</Button>
               </Link>
             </div>
           ) : (
@@ -131,16 +150,12 @@ const Dashboard = () => {
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 truncate">{demand.title}</h3>
-                      <p className="text-sm text-gray-600 truncate">{demand.provider?.tradeName}</p>
+                      <p className="text-sm text-gray-600 truncate">{demand.provider?.name}</p>
                     </div>
                     <div className="flex items-center space-x-2">
                       {statusIcons[demand.status]}
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        demand.status === 'Pendente' ? 'bg-yellow-100 text-yellow-800' :
-                        demand.status === 'Em Andamento' ? 'bg-blue-100 text-blue-800' :
-                        'bg-green-100 text-green-800'
-                      }`}>
-                        {demand.status}
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[demand.status]}`}>
+                        {statusLabels[demand.status]}
                       </span>
                     </div>
                   </div>
@@ -155,35 +170,35 @@ const Dashboard = () => {
 
         {/* Quick Actions & System Info */}
         <Card>
-          <h2 className="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-6">Ações Rápidas</h2>
           <div className="space-y-4">
             <Link to="/demands" className="block">
               <Button className="w-full justify-start space-x-3 py-4">
                 <Wrench className="w-5 h-5" />
-                <span>Create New Demand</span>
+                <span>Criar Nova Demanda</span>
               </Button>
             </Link>
             
             <Link to="/providers" className="block">
               <Button variant="secondary" className="w-full justify-start space-x-3 py-4">
                 <Users className="w-5 h-5" />
-                <span>Add New Provider</span>
+                <span>Adicionar Provedor</span>
               </Button>
             </Link>
 
             <div className="pt-6 border-t border-gray-200">
-              <h3 className="font-semibold text-gray-900 mb-4">System Overview</h3>
+              <h3 className="font-semibold text-gray-900 mb-4">Visão do Sistema</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Total Providers</span>
+                  <span className="text-gray-600">Total de Provedores</span>
                   <span className="font-semibold text-[#4169E1]">{stats.totalProviders}</span>
                 </div>
                 <div className="flex justify-between items-center py-2 border-b border-gray-100">
-                  <span className="text-gray-600">Active Demands</span>
+                  <span className="text-gray-600">Demandas Ativas</span>
                   <span className="font-semibold text-blue-600">{stats.pendingDemands + stats.inProgressDemands}</span>
                 </div>
                 <div className="flex justify-between items-center py-2">
-                  <span className="text-gray-600">Completion Rate</span>
+                  <span className="text-gray-600">Taxa de Conclusão</span>
                   <span className="font-semibold text-green-600">
                     {stats.totalDemands > 0 
                       ? Math.round((stats.completedDemands / stats.totalDemands) * 100) 

@@ -1,10 +1,10 @@
 export interface Provider {
-  id: string;
-  tradeName: string;
-  responsiblePerson: string;
-  contact: string;
+  id: number;  // ← Mudou de string para number (autoincrement)
+  name: string; // ← Mudou de tradeName para name
+  email: string;
+  contact?: string; // ← Opcional
+  responsible?: string; // ← Opcional (responsável técnico)
   createdAt: string;
-  updatedAt: string;
 }
 
-export type ProviderFormData = Omit<Provider, 'id' | 'createdAt' | 'updatedAt'>;
+export type ProviderFormData = Omit<Provider, 'id' | 'createdAt'>;

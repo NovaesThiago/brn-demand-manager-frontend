@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { TechnicalAction } from '../types';
 import { technicalActionsService } from '../services/technicalActions';
 
-export const useTechnicalActions = (demandId?: string) => {
+export const useTechnicalActions = (demandId?: number) => { // ← number como parâmetro
   const [actions, setActions] = useState<TechnicalAction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -13,7 +13,7 @@ export const useTechnicalActions = (demandId?: string) => {
     }
   }, [demandId]);
 
-  const loadActions = async (id: string) => {
+  const loadActions = async (id: number) => { // ← number como parâmetro
     try {
       setLoading(true);
       const data = await technicalActionsService.getByDemandId(id);

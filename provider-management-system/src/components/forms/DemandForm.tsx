@@ -4,7 +4,7 @@ import { Input, Textarea, Select, Button } from '../ui';
 import { FormField} from '../ui/FormField';
 import { FormSection } from '../ui/FormSection';
 import { DEMAND_STATUS_OPTIONS, DEMAND_TYPE_OPTIONS } from '../../utils/constants';
-import { FileText, AlertCircle, User, Building2 } from 'lucide-react';
+import { FileText, AlertCircle, Building2 } from 'lucide-react';
 
 interface DemandFormProps {
   onSubmit: (data: DemandFormData) => void;
@@ -25,47 +25,54 @@ export const DemandForm = ({
     initialData || {
       title: '',
       description: '',
-      type: 'Diagnóstico',
-      status: 'Pendente',
-      providerId: '',
+      type: 'DIAGNOSTICO',
+      status: 'PENDENTE',
+      providerId: 0,
     }
   );
 
-  const [errors, setErrors] = useState<Partial<DemandFormData>>({});
+const [errors, setErrors] = useState<Partial<Record<keyof DemandFormData, string>>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const newErrors: Partial<DemandFormData> = {};
-    if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
-    if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
-    if (!formData.providerId) newErrors.providerId = 'Provedor é obrigatório';
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  
+  const newErrors: Partial<Record<keyof DemandFormData, string>> = {};
+  if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
+  if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
+  if (!formData.providerId || formData.providerId === 0) newErrors.providerId = 'Provedor é obrigatório';
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
+  if (Object.keys(newErrors).length > 0) {
+    setErrors(newErrors);
+    return;
+  }
 
-    setErrors({});
-    onSubmit(formData);
-  };
+  setErrors({});
+  onSubmit(formData);
+};
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    
+    // Para providerId, converte string para number, para outros campos mantém como string
+    if (name === 'providerId') {
+      setFormData(prev => ({ ...prev, [name]: Number(value) }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
+    
     if (errors[name as keyof DemandFormData]) {
       setErrors(prev => ({ ...prev, [name]: undefined }));
     }
   };
 
   const demandTypeIcons = {
-    Diagnóstico: '🔍',
-    Manutenção: '🛠️',
-    Configuração: '⚙️',
-    Instalação: '📡',
-    Outro: '📄'
+    DIAGNOSTICO: '🔍',
+    MANUTENCAO: '🛠️',
+    CONFIGURACAO: '⚙️',
+    INSTALACAO: '📡',
+    OUTRO: '📄'
   };
 
   return (
@@ -151,13 +158,13 @@ export const DemandForm = ({
               <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
               <Select
                 name="providerId"
-                value={formData.providerId}
+                value={formData.providerId.toString()}
                 onChange={handleChange}
                 options={[
-                  { value: '', label: 'Selecione um provedor' },
+                  { value: '0', label: 'Selecione um provedor' },
                   ...providers.map(p => ({
-                    value: p.id,
-                    label: p.tradeName
+                    value: p.id.toString(),
+                    label: p.name
                   }))
                 ]}
                 disabled={loading}

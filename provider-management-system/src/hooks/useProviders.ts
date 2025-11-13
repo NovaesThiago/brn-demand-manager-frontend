@@ -33,7 +33,7 @@ export const useProviders = () => {
       addNotification({
         type: 'success',
         title: 'Provider created successfully!',
-        message: `${providerData.tradeName} has been added to the system.`
+        message: `${providerData.name} has been added to the system.`
       });
       return newProvider;
     } catch (err) {
@@ -48,7 +48,7 @@ export const useProviders = () => {
     }
   };
 
-  const updateProvider = async (id: string, providerData: Partial<Provider>) => {
+  const updateProvider = async (id: number, providerData: Partial<Provider>) => {
     try {
       const updatedProvider = await providersService.update(id, providerData);
       setProviders(prev => 

@@ -7,7 +7,7 @@ export const providersService = {
     return response.data;
   },
 
-  async getById(id: string): Promise<Provider> {
+  async getById(id: number): Promise<Provider> { // ← number como parâmetro
     const response = await api.get(`/providers/${id}`);
     return response.data;
   },
@@ -17,12 +17,12 @@ export const providersService = {
     return response.data;
   },
 
-  async update(id: string, data: Partial<Provider>): Promise<Provider> {
+  async update(id: number, data: Partial<Provider>): Promise<Provider> { // ← number como parâmetro
     const response = await api.put(`/providers/${id}`, data);
     return response.data;
   },
 
-  async delete(id: string): Promise<void> {
+  async delete(id: number): Promise<void> { // ← number como parâmetro
     await api.delete(`/providers/${id}`);
   }
 };
