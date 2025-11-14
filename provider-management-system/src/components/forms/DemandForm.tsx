@@ -170,7 +170,6 @@ export const DemandForm = ({
             label="Provedor Responsável" 
             required 
             error={errors.providerId}
-            helpText="Selecione o provedor relacionado a esta demanda"
           >
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
