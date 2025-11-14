@@ -12,7 +12,7 @@ export const useDemands = () => {
     search: '',
     status: '',
     type: '',
-    providerId: '',
+    providerId: '', // ← Isso é string no filtro
   });
 
   const debouncedSearch = useDebounce(filters.search, 300);
@@ -32,8 +32,9 @@ export const useDemands = () => {
       const matchesStatus = !filters.status || demand.status === filters.status;
       const matchesType = !filters.type || demand.type === filters.type;
       
-      // CORREÇÃO AQUI: Converter number para string antes de comparar
-      const matchesProvider = !filters.providerId || demand.providerId.toString() === filters.providerId;
+      // CORREÇÃO: Converter o filtro para number antes de comparar
+      const matchesProvider = !filters.providerId || 
+        demand.providerId === Number(filters.providerId); // ← CORREÇÃO AQUI
 
       return matchesSearch && matchesStatus && matchesType && matchesProvider;
     });
