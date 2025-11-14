@@ -9,10 +9,11 @@ export const useApiHealth = () => {
     const checkHealth = async () => {
       try {
         setLoading(true);
-        await api.get('/health'); // Ou um endpoint simples como '/providers'
+        // CORREÇÃO: Usar endpoint que DEFINITIVAMENTE existe
+        await api.get('/providers?limit=1'); // ← Este endpoint existe no seu backend
         setIsOnline(true);
       } catch (error) {
-        console.warn('Backend is not reachable:', error);
+        console.warn('Backend não conectou:', error);
         setIsOnline(false);
       } finally {
         setLoading(false);
