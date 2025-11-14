@@ -14,6 +14,15 @@ interface DemandFormProps {
   loading?: boolean;
 }
 
+// CORREÇÃO: Criar um tipo para o form data que aceite null no providerId
+interface DemandFormState {
+  title: string;
+  description: string;
+  type: 'DIAGNOSTICO' | 'MANUTENCAO' | 'CONFIGURACAO' | 'INSTALACAO' | 'OUTRO';
+  status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
+  providerId: number | null; // ← Pode ser number ou null
+}
+
 export const DemandForm = ({ 
   onSubmit, 
   onCancel, 
@@ -21,53 +30,73 @@ export const DemandForm = ({
   providers, 
   loading = false 
 }: DemandFormProps) => {
-  const [formData, setFormData] = useState<DemandFormData>(
-    initialData || {
+  // CORREÇÃO: Usar o tipo correto para o estado
+  const [formData, setFormData] = useState<DemandFormState>(
+    initialData ? {
+      ...initialData,
+      providerId: initialData.providerId || null
+    } : {
       title: '',
       description: '',
       type: 'DIAGNOSTICO',
       status: 'PENDENTE',
-      providerId: 0,
+      providerId: null, // ← Agora é válido
     }
   );
 
-const [errors, setErrors] = useState<Partial<Record<keyof DemandFormData, string>>>({});
+  const [errors, setErrors] = useState<Partial<Record<keyof DemandFormState, string>>>({});
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  
-  const newErrors: Partial<Record<keyof DemandFormData, string>> = {};
-  if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
-  if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
-  if (!formData.providerId || formData.providerId === 0) newErrors.providerId = 'Provedor é obrigatório';
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const newErrors: Partial<Record<keyof DemandFormState, string>> = {};
+    if (!formData.title.trim()) newErrors.title = 'Título é obrigatório';
+    if (!formData.description.trim()) newErrors.description = 'Descrição é obrigatória';
+    if (!formData.providerId) newErrors.providerId = 'Provedor é obrigatório';
 
-  if (Object.keys(newErrors).length > 0) {
-    setErrors(newErrors);
-    return;
-  }
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
-  setErrors({});
-  onSubmit(formData);
-};
+    setErrors({});
+    
+    // CORREÇÃO: Garantir que providerId é number no submit
+    onSubmit({
+      ...formData,
+      providerId: formData.providerId as number // ← Agora temos certeza que não é null
+    });
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     
-    // Para providerId, converte string para number, para outros campos mantém como string
     if (name === 'providerId') {
-      setFormData(prev => ({ ...prev, [name]: Number(value) }));
+      // CORREÇÃO: Converter para number ou null
+      const numericValue = value === '' ? null : Number(value);
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: numericValue 
+      }));
     } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
+      setFormData(prev => ({ 
+        ...prev, 
+        [name]: value 
+      }));
     }
     
-    if (errors[name as keyof DemandFormData]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+    // CORREÇÃO: Usar o tipo correto para errors
+    if (errors[name as keyof DemandFormState]) {
+      setErrors(prev => ({ 
+        ...prev, 
+        [name]: undefined 
+      }));
     }
   };
 
- return (
+  return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <FormSection 
         title="Detalhes da Demanda" 
@@ -147,10 +176,10 @@ const handleSubmit = (e: React.FormEvent) => {
               <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
               <Select
                 name="providerId"
-                value={formData.providerId.toString()}
+                value={formData.providerId?.toString() || ''}
                 onChange={handleChange}
                 options={[
-                  { value: '0', label: 'Selecione um provedor' },
+                  { value: '', label: 'Selecione um provedor' },
                   ...providers.map(p => ({
                     value: p.id.toString(),
                     label: p.name
