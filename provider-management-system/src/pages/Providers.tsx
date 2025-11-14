@@ -19,8 +19,13 @@ const Providers = () => {
     try {
       await createProvider(providerData);
       setShowForm(false);
+      addNotification({
+        type: 'success',
+        title: 'Provedor criado com sucesso!',
+        message: `${providerData.name} foi adicionado ao sistema.`
+      });
     } catch (err) {
-      console.error('Failed to create provider:', err);
+      console.error('Falha ao criar provedor:', err);
     } finally {
       setFormLoading(false);
     }
@@ -30,8 +35,8 @@ const Providers = () => {
     if (providers.length === 0) {
       addNotification({
         type: 'warning',
-        title: 'No data to export',
-        message: 'There are no providers to export.'
+        title: 'Nenhum dado para exportar',
+        message: 'Não há provedores para exportar.'
       });
       return;
     }
@@ -39,28 +44,28 @@ const Providers = () => {
     exportProviders(providers);
     addNotification({
       type: 'success',
-      title: 'Export completed!',
-      message: 'Providers data has been exported to CSV.'
+      title: 'Exportação concluída!',
+      message: 'Dados dos provedores foram exportados para CSV.'
     });
   };
 
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Providers</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Provedores</h1>
         <div className="flex space-x-3">
           <Button variant="secondary" onClick={handleExport}>
-            Export CSV
+            Exportar CSV
           </Button>
           <Button onClick={() => setShowForm(true)}>
-            Add Provider
+            Adicionar Provedor
           </Button>
         </div>
       </div>
 
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-red-800">{error}</p>
+        <div className="bg-red-50 border border-red-200 rounded-md p-4 dark:bg-red-900/20 dark:border-red-800">
+          <p className="text-red-800 dark:text-red-200">{error}</p>
         </div>
       )}
       
