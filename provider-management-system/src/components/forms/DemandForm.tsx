@@ -1,3 +1,4 @@
+// src/components/forms/DemandForm.tsx
 import { useState } from 'react';
 import type { DemandFormData, Provider } from '../../types';
 import { Input, Textarea, Select, Button } from '../ui';
@@ -14,13 +15,12 @@ interface DemandFormProps {
   loading?: boolean;
 }
 
-// CORREÇÃO: Criar um tipo para o form data que aceite null no providerId
 interface DemandFormState {
   title: string;
   description: string;
   type: 'DIAGNOSTICO' | 'MANUTENCAO' | 'CONFIGURACAO' | 'INSTALACAO' | 'OUTRO';
   status: 'PENDENTE' | 'EM_ANDAMENTO' | 'CONCLUIDA' | 'CANCELADA';
-  providerId: number | null; // ← Pode ser number ou null
+  providerId: number | null;
 }
 
 export const DemandForm = ({ 
@@ -30,7 +30,6 @@ export const DemandForm = ({
   providers, 
   loading = false 
 }: DemandFormProps) => {
-  // CORREÇÃO: Usar o tipo correto para o estado
   const [formData, setFormData] = useState<DemandFormState>(
     initialData ? {
       ...initialData,
@@ -40,7 +39,7 @@ export const DemandForm = ({
       description: '',
       type: 'DIAGNOSTICO',
       status: 'PENDENTE',
-      providerId: null, // ← Agora é válido
+      providerId: null,
     }
   );
 
@@ -61,10 +60,9 @@ export const DemandForm = ({
 
     setErrors({});
     
-    // CORREÇÃO: Garantir que providerId é number no submit
     onSubmit({
       ...formData,
-      providerId: formData.providerId as number // ← Agora temos certeza que não é null
+      providerId: formData.providerId as number
     });
   };
 
@@ -74,7 +72,6 @@ export const DemandForm = ({
     const { name, value } = e.target;
     
     if (name === 'providerId') {
-      // CORREÇÃO: Converter para number ou null
       const numericValue = value === '' ? null : Number(value);
       setFormData(prev => ({ 
         ...prev, 
@@ -87,7 +84,6 @@ export const DemandForm = ({
       }));
     }
     
-    // CORREÇÃO: Usar o tipo correto para errors
     if (errors[name as keyof DemandFormState]) {
       setErrors(prev => ({ 
         ...prev, 
@@ -116,7 +112,7 @@ export const DemandForm = ({
               onChange={handleChange}
               placeholder="ex: Análise de Lentidão na Rede Borda"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -136,7 +132,7 @@ export const DemandForm = ({
               placeholder="Descreva o problema, sintomas, equipamentos envolvidos, horários de ocorrência..."
               rows={5}
               disabled={loading}
-              className="pl-10 resize-none"
+              className="pl-10 resize-none dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -151,6 +147,7 @@ export const DemandForm = ({
               onChange={handleChange}
               options={DEMAND_TYPE_OPTIONS}
               disabled={loading}
+              className="dark:bg-gray-800 dark:border-gray-600 dark:text-white"
             />
           </FormField>
 
@@ -161,6 +158,7 @@ export const DemandForm = ({
               onChange={handleChange}
               options={DEMAND_STATUS_OPTIONS}
               disabled={loading}
+              className="dark:bg-gray-800 dark:border-gray-600 dark:text-white"
             />
           </FormField>
         </FormSection>
@@ -170,6 +168,7 @@ export const DemandForm = ({
             label="Provedor Responsável" 
             required 
             error={errors.providerId}
+            helpText="Selecione o provedor relacionado a esta demanda"
           >
             <div className="relative">
               <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 z-10" />
@@ -185,14 +184,14 @@ export const DemandForm = ({
                   }))
                 ]}
                 disabled={loading}
-                className="pl-10"
+                className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white"
               />
             </div>
           </FormField>
         </FormSection>
       </div>
 
-      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
         <Button
           type="button"
           variant="secondary"

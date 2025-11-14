@@ -1,3 +1,4 @@
+// src/components/forms/ProviderForm.tsx
 import { useState } from 'react';
 import type { ProviderFormData } from '../../types';
 import { Input, Button } from '../ui';
@@ -20,10 +21,10 @@ export const ProviderForm = ({
 }: ProviderFormProps) => {
   const [formData, setFormData] = useState<ProviderFormData>(
     initialData || {
-      name: '', // ← mudou de tradeName para name
+      name: '',
       email: '',
-      contact: '', // ← campo de contato (telefone)
-      responsible: '', // ← campo do responsável técnico
+      contact: '',
+      responsible: '',
     }
   );
 
@@ -36,7 +37,6 @@ export const ProviderForm = ({
     if (!formData.name.trim()) newErrors.name = 'Nome é obrigatório';
     if (!formData.email.trim()) newErrors.email = 'Email é obrigatório';
 
-    // Validação de email
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email inválido';
     }
@@ -78,7 +78,7 @@ export const ProviderForm = ({
               onChange={handleChange}
               placeholder="ex: BRNX Fibra"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -98,7 +98,7 @@ export const ProviderForm = ({
               onChange={handleChange}
               placeholder="ex: suporte@brnxfibra.com.br"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -121,7 +121,7 @@ export const ProviderForm = ({
               onChange={handleChange}
               placeholder="ex: João Silva"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -139,13 +139,13 @@ export const ProviderForm = ({
               onChange={handleChange}
               placeholder="ex: (11) 99999-9999"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
       </FormSection>
 
-      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
         <Button
           type="button"
           variant="secondary"

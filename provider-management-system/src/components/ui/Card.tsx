@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'react';
 
+// src/components/ui/Card.tsx
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
   hover?: boolean;
 }
@@ -7,7 +8,7 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 export const Card = ({ className = '', hover = false, children, ...props }: CardProps) => {
   return (
     <div
-      className={`bg-white rounded-lg shadow-sm border p-6 ${hover ? 'hover:shadow-md transition-shadow' : ''} ${className}`}
+      className={`card ${hover ? 'card-hover' : ''} ${className}`}
       {...props}
     >
       {children}

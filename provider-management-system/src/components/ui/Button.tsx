@@ -1,3 +1,4 @@
+// src/components/ui/Button.tsx
 import type { ButtonHTMLAttributes } from 'react';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -12,12 +13,12 @@ export const Button = ({
   children, 
   ...props 
 }: ButtonProps) => {
-  const baseClasses = 'rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  const baseClasses = 'rounded-md font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-[#4169E1] focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed dark:focus:ring-offset-gray-800';
   
   const variants = {
-    primary: 'bg-[#4169E1] text-white hover:bg-[#3151B0]',
-    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700'
+    primary: 'bg-[#4169E1] text-white hover:bg-[#3151B0] dark:bg-blue-600 dark:hover:bg-blue-700',
+    secondary: 'bg-gray-200 text-gray-900 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600',
+    danger: 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800'
   };
   
   const sizes = {

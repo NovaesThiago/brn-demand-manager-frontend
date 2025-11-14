@@ -1,3 +1,4 @@
+// src/components/forms/TechnicalActionForm.tsx
 import { useState } from 'react';
 import { Textarea, Input, Button } from '../ui';
 import { FormField} from '../ui/FormField';
@@ -6,7 +7,7 @@ import { FileText, User } from 'lucide-react';
 
 interface TechnicalActionFormProps {
   demandId: number;
-  onSubmit: (data: { label: string; technician: string; demandId: number }) => void; // ← CORREÇÃO: Incluir demandId
+  onSubmit: (data: { label: string; technician: string; demandId: number }) => void;
   onCancel: () => void;
   loading?: boolean;
 }
@@ -27,7 +28,6 @@ export const TechnicalActionForm = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validação
     const newErrors: Partial<typeof formData> = {};
     if (!formData.label.trim()) newErrors.label = 'Descrição da ação é obrigatória';
     if (!formData.technician.trim()) newErrors.technician = 'Nome do técnico é obrigatório';
@@ -41,7 +41,7 @@ export const TechnicalActionForm = ({
     onSubmit({
       label: formData.label,
       technician: formData.technician,
-      demandId: demandId, // ← CORREÇÃO: Incluir demandId aqui
+      demandId: demandId,
     });
   };
 
@@ -76,7 +76,7 @@ export const TechnicalActionForm = ({
               placeholder="Ex: Configurado BGP para novo peering, ajustado QoS na interface eth1..."
               rows={4}
               disabled={loading}
-              className="pl-10 resize-none"
+              className="pl-10 resize-none dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
@@ -95,13 +95,13 @@ export const TechnicalActionForm = ({
               onChange={handleChange}
               placeholder="ex: João Silva"
               disabled={loading}
-              className="pl-10"
+              className="pl-10 dark:bg-gray-800 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </FormField>
       </FormSection>
 
-      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+      <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200 dark:border-gray-700">
         <Button
           type="button"
           variant="secondary"

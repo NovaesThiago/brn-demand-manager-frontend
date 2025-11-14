@@ -68,9 +68,9 @@ const Providers = () => {
 
       {showForm && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
             <div className="p-6">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Add New Provider</h2>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Adicionar Novo Provedor</h2>
               <ProviderForm
                 onSubmit={handleCreateProvider}
                 onCancel={() => setShowForm(false)}

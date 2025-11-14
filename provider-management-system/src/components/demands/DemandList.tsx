@@ -1,6 +1,8 @@
+// src/components/demands/DemandList.tsx
 import { Link } from 'react-router-dom';
 import type { Demand } from '../../types';
 import { Card } from '../ui';
+import { useThemeColors } from '../../hooks/useThemeColors'; // ← NOVO
 
 interface DemandListProps {
   demands: Demand[];
@@ -8,31 +10,18 @@ interface DemandListProps {
 }
 
 export const DemandList = ({ demands, loading = false }: DemandListProps) => {
-  const statusColors = {
-    PENDENTE: 'bg-yellow-100 text-yellow-800',
-    EM_ANDAMENTO: 'bg-blue-100 text-blue-800',
-    CONCLUIDA: 'bg-green-100 text-green-800',
-    CANCELADA: 'bg-red-100 text-red-800',
-  };
-
-  const typeColors = {
-    DIAGNOSTICO: 'bg-purple-100 text-purple-800',
-    MANUTENCAO: 'bg-orange-100 text-orange-800',
-    CONFIGURACAO: 'bg-indigo-100 text-indigo-800',
-    INSTALACAO: 'bg-teal-100 text-teal-800',
-    OUTRO: 'bg-gray-100 text-gray-800',
-  };
+  const { statusColors, typeColors } = useThemeColors(); // ← NOVO
 
   if (loading) {
     return (
       <div className="space-y-4">
         {[1, 2, 3].map(i => (
           <Card key={i} className="animate-pulse">
-            <div className="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
-            <div className="h-3 bg-gray-200 rounded w-1/2 mb-4"></div>
+            <div className="h-4 bg-gray-200 rounded w-1/3 mb-2 dark:bg-gray-700"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2 mb-4 dark:bg-gray-700"></div>
             <div className="flex space-x-2">
-              <div className="h-6 bg-gray-200 rounded w-20"></div>
-              <div className="h-6 bg-gray-200 rounded w-24"></div>
+              <div className="h-6 bg-gray-200 rounded w-20 dark:bg-gray-700"></div>
+              <div className="h-6 bg-gray-200 rounded w-24 dark:bg-gray-700"></div>
             </div>
           </Card>
         ))}
@@ -44,7 +33,7 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
     return (
       <Card>
         <div className="text-center py-8">
-          <p className="text-gray-600">No demands found.</p>
+          <p className="text-gray-600 dark:text-gray-400">Nenhuma demanda encontrada.</p>
         </div>
       </Card>
     );
@@ -56,11 +45,11 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
         <Link 
           key={demand.id} 
           to={`/demands/${demand.id}`}
-          className="block" // Importante para o Link se comportar como block
+          className="block"
         >
-          <Card hover className="cursor-pointer transition-all hover:scale-[1.02]">
+          <Card hover className="cursor-pointer transition-all hover:scale-[1.02] dark:hover:bg-gray-750">
             <div className="flex justify-between items-start mb-3">
-              <h3 className="text-lg font-semibold text-gray-900 flex-1 pr-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex-1 pr-4">
                 {demand.title}
               </h3>
               <div className="flex space-x-2 flex-shrink-0">
@@ -73,17 +62,17 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
               </div>
             </div>
             
-            <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 line-clamp-2">
               {demand.description}
             </p>
             
             <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-500">
-                Provider: <span className="font-medium text-[#4169E1]">
+              <span className="text-gray-500 dark:text-gray-400">
+                Provider: <span className="font-medium text-[#4169E1] dark:text-blue-400">
                   {demand.provider?.name || 'Unknown'}
                 </span>
               </span>
-              <span className="text-gray-400">
+              <span className="text-gray-400 dark:text-gray-500">
                 {new Date(demand.createdAt).toLocaleDateString()}
               </span>
             </div>

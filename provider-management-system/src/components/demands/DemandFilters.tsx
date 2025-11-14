@@ -42,13 +42,14 @@ export const DemandFilters = ({ providers, onFilter, onClear }: DemandFiltersPro
   const hasActiveFilters = filters.search || filters.status || filters.type || filters.providerId;
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-sm border">
+    <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm border dark:border-gray-700">
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4 items-end">
         <Input
           label="Search"
           placeholder="Search demands..."
           value={filters.search}
           onChange={(e) => handleFilterChange('search', e.target.value)}
+          className="dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
         
         <Select

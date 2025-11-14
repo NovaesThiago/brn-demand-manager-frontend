@@ -1,10 +1,13 @@
+// src/components/layout/Header.tsx
 import { Link, useLocation } from 'react-router-dom';
 import { useApiHealth } from '../../hooks/useApiHealth';
-import { Wifi, Server } from 'lucide-react';
+import { useTheme } from '../../contexts/ThemeContext'; // ← NOVO
+import { Wifi, Server, Sun, Moon } from 'lucide-react'; // ← NOVOS ÍCONES
 
 const Header = () => {
   const location = useLocation();
   const { isOnline, loading } = useApiHealth();
+  const { theme, toggleTheme } = useTheme(); // ← NOVO
 
   const navigation = [
     { name: 'Dashboard', href: '/'},
@@ -13,7 +16,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-gradient-to-r from-[#4169E1] to-[#3151B0] shadow-lg">
+    <header className="bg-gradient-to-r from-[#4169E1] to-[#3151B0] shadow-lg dark:from-[#3151B0] dark:to-[#1e3a8a]"> {/* ← ATUALIZADO */}
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo e Nome */}
@@ -46,8 +49,22 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Status do Sistema */}
+          {/* Controles */}
           <div className="flex items-center space-x-3">
+            {/* Toggle Dark Mode */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 text-white hover:bg-white/10 rounded-lg transition-colors"
+              aria-label={`Mudar para modo ${theme === 'light' ? 'escuro' : 'claro'}`}
+            >
+              {theme === 'light' ? (
+                <Moon className="w-5 h-5" />
+              ) : (
+                <Sun className="w-5 h-5" />
+              )}
+            </button>
+
+            {/* Status do Sistema */}
             {!loading && (
               <div className="flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full">
                 <Server className={`w-3 h-3 ${isOnline ? 'text-green-300' : 'text-red-300'}`} />
