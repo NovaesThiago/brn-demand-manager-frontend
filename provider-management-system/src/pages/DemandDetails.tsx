@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Button, Card } from '../components/ui';
 import { TechnicalActionForm } from '../components/forms';
@@ -11,15 +11,45 @@ const DemandDetails = () => {
   const navigate = useNavigate();
   const { allDemands, updateDemand } = useDemands();
   
-  // Converter o ID da URL para number e passar para o hook
-  const demandId = id ? parseInt(id) : undefined;
-  const { actions, loading: actionsLoading, createAction } = useTechnicalActions(demandId);
+  // CORREÇÃO: Converter e validar o ID
+  const demandId = id ? parseInt(id) : null;
+  
+  // CORREÇÃO: Só usar o hook se demandId for válido
+  const technicalActionsData = demandId 
+    ? useTechnicalActions(demandId)
+    : { 
+        actions: [], 
+        loading: false, 
+        createAction: undefined,
+        error: 'ID da demanda inválido'
+      };
+
+  const { actions, loading: actionsLoading, createAction } = technicalActionsData;
   
   const [showActionForm, setShowActionForm] = useState(false);
   const [formLoading, setFormLoading] = useState(false);
 
-  // Encontrar a demanda pelo ID - converter para number para comparação
-  const demand = allDemands.find(d => d.id === parseInt(id || '0'));
+  // CORREÇÃO: Encontrar a demanda usando o demandId já convertido
+  const demand = allDemands.find(d => d.id === demandId);
+
+  // CORREÇÃO: Redirecionar se ID for inválido
+  useEffect(() => {
+    if (!demandId) {
+      navigate('/demands');
+    }
+  }, [demandId, navigate]);
+
+  if (!demandId) {
+    return (
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold text-gray-900 mb-4">ID Inválido</h1>
+        <p className="text-gray-600 mb-6">O ID da demanda é inválido.</p>
+        <Link to="/demands" className="btn-primary">
+          Voltar para Demandas
+        </Link>
+      </div>
+    );
+  }
 
   if (!demand) {
     return (
@@ -74,13 +104,16 @@ const DemandDetails = () => {
     }
   };
 
-  const handleCreateAction = async (actionData: any) => {
+  const handleCreateAction = async (actionData: { label: string; technician: string; demandId: number }) => {
+    // CORREÇÃO: Verificar se createAction existe antes de usar
+    if (!createAction) {
+      console.error('Não é possível criar ação: createAction não disponível');
+      return;
+    }
+
     setFormLoading(true);
     try {
-      await createAction({
-        ...actionData,
-        demandId: demand.id,
-      });
+      await createAction(actionData);
       setShowActionForm(false);
     } catch (err) {
       console.error('Erro ao criar ação:', err);
@@ -109,6 +142,8 @@ const DemandDetails = () => {
           </Button>
           <Button
             onClick={() => setShowActionForm(true)}
+            // CORREÇÃO: Desabilitar botão se não puder criar ações
+            disabled={!createAction}
           >
             Adicionar Ação
           </Button>

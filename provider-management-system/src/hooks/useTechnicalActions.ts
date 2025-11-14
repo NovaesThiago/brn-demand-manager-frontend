@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { TechnicalAction } from '../types';
 import { technicalActionsService } from '../services/technicalActions';
 
-export const useTechnicalActions = (demandId?: number) => { // ← number como parâmetro
+export const useTechnicalActions = (demandId?: number) => {
   const [actions, setActions] = useState<TechnicalAction[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -10,12 +10,17 @@ export const useTechnicalActions = (demandId?: number) => { // ← number como p
   useEffect(() => {
     if (demandId) {
       loadActions(demandId);
+    } else {
+      // Limpar ações se não há demandId
+      setActions([]);
+      setError('Demand ID is required to load technical actions');
     }
   }, [demandId]);
 
-  const loadActions = async (id: number) => { // ← number como parâmetro
+  const loadActions = async (id: number) => {
     try {
       setLoading(true);
+      setError(null);
       const data = await technicalActionsService.getByDemandId(id);
       setActions(data);
     } catch (err) {
@@ -26,9 +31,16 @@ export const useTechnicalActions = (demandId?: number) => { // ← number como p
     }
   };
 
-  const createAction = async (actionData: Omit<TechnicalAction, 'id'>) => {
+  const createAction = async (actionData: { label: string; technician: string }) => {
+    if (!demandId) {
+      throw new Error('Demand ID is required to create a technical action');
+    }
+
     try {
-      const newAction = await technicalActionsService.create(actionData);
+      const newAction = await technicalActionsService.create({
+        ...actionData,
+        demandId: demandId
+      });
       setActions(prev => [newAction, ...prev]);
       return newAction;
     } catch (err) {
@@ -42,6 +54,7 @@ export const useTechnicalActions = (demandId?: number) => { // ← number como p
     loading,
     error,
     createAction,
-    refetch: demandId ? () => loadActions(demandId) : undefined
+    refetch: demandId ? () => loadActions(demandId) : undefined,
+    isValid: !!demandId // ← Novo campo para verificar se o hook é válido
   };
 };
