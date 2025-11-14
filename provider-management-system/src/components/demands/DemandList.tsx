@@ -2,7 +2,7 @@
 import { Link } from 'react-router-dom';
 import type { Demand } from '../../types';
 import { Card } from '../ui';
-import { useThemeColors } from '../../hooks/useThemeColors'; // ← NOVO
+import { useThemeColors } from '../../hooks/useThemeColors'; // ← Importar o hook
 
 interface DemandListProps {
   demands: Demand[];
@@ -10,7 +10,7 @@ interface DemandListProps {
 }
 
 export const DemandList = ({ demands, loading = false }: DemandListProps) => {
-  const { statusColors, typeColors } = useThemeColors(); // ← NOVO
+  const { statusColors, typeColors } = useThemeColors(); // ← Usar o hook
 
   if (loading) {
     return (
@@ -47,7 +47,7 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
           to={`/demands/${demand.id}`}
           className="block"
         >
-          <Card hover className="cursor-pointer transition-all hover:scale-[1.02] dark:hover:bg-gray-750">
+          <Card hover className="cursor-pointer transition-all hover:scale-[1.02] dark:bg-gray-800 dark:border-gray-700">
             <div className="flex justify-between items-start mb-3">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex-1 pr-4">
                 {demand.title}
@@ -68,12 +68,12 @@ export const DemandList = ({ demands, loading = false }: DemandListProps) => {
             
             <div className="flex justify-between items-center text-sm">
               <span className="text-gray-500 dark:text-gray-400">
-                Provider: <span className="font-medium text-[#4169E1] dark:text-blue-400">
-                  {demand.provider?.name || 'Unknown'}
+                Provedor: <span className="font-medium text-[#4169E1] dark:text-blue-400">
+                  {demand.provider?.name || 'Desconhecido'}
                 </span>
               </span>
               <span className="text-gray-400 dark:text-gray-500">
-                {new Date(demand.createdAt).toLocaleDateString()}
+                {new Date(demand.createdAt).toLocaleDateString('pt-BR')}
               </span>
             </div>
           </Card>
