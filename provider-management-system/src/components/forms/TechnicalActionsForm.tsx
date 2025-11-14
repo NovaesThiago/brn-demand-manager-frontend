@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import type { TechnicalAction } from '../../types';
 import { Textarea, Input, Button } from '../ui';
 import { FormField} from '../ui/FormField';
 import { FormSection } from '../ui/FormSection';
-import { FileText, User, Calendar } from 'lucide-react';
+import { FileText, User } from 'lucide-react';
 
 interface TechnicalActionFormProps {
   demandId: number;
-  onSubmit: (data: Omit<TechnicalAction, 'id'>) => void;
+  onSubmit: (data: { label: string; technician: string; demandId: number }) => void; // ← CORREÇÃO: Incluir demandId
   onCancel: () => void;
   loading?: boolean;
 }
@@ -19,9 +18,8 @@ export const TechnicalActionForm = ({
   loading = false 
 }: TechnicalActionFormProps) => {
   const [formData, setFormData] = useState({
-    label: '', // ← Mudou de 'description' para 'label'
-    technician: '', // ← Mudou de 'technicianName' para 'technician'
-    executedAt: new Date().toISOString().split('T')[0],
+    label: '',
+    technician: '',
   });
 
   const [errors, setErrors] = useState<Partial<typeof formData>>({});
@@ -33,7 +31,6 @@ export const TechnicalActionForm = ({
     const newErrors: Partial<typeof formData> = {};
     if (!formData.label.trim()) newErrors.label = 'Descrição da ação é obrigatória';
     if (!formData.technician.trim()) newErrors.technician = 'Nome do técnico é obrigatório';
-    if (!formData.executedAt) newErrors.executedAt = 'Data de execução é obrigatória';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -42,11 +39,9 @@ export const TechnicalActionForm = ({
 
     setErrors({});
     onSubmit({
-      demandId,
-      label: formData.label, // ← Mudou para 'label'
-      technician: formData.technician, // ← Mudou para 'technician'
-      done: false, // ← Campo obrigatório do schema
-      createdAt: new Date().toISOString(), // ← Campo obrigatório
+      label: formData.label,
+      technician: formData.technician,
+      demandId: demandId, // ← CORREÇÃO: Incluir demandId aqui
     });
   };
 
@@ -99,25 +94,6 @@ export const TechnicalActionForm = ({
               value={formData.technician}
               onChange={handleChange}
               placeholder="ex: João Silva"
-              disabled={loading}
-              className="pl-10"
-            />
-          </div>
-        </FormField>
-
-        <FormField 
-          label="Data de Execução *" 
-          required 
-          error={errors.executedAt}
-          helpText="Data em que a ação foi realizada"
-        >
-          <div className="relative">
-            <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              name="executedAt"
-              type="date"
-              value={formData.executedAt}
-              onChange={handleChange}
               disabled={loading}
               className="pl-10"
             />
