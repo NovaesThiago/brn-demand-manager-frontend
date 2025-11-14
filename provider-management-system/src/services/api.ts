@@ -1,9 +1,16 @@
 import axios from 'axios';
 
-// CORREÇÃO 1: Usar variável de ambiente com fallback
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://brn-demand-manager-backend-production.up.railway.app';
+// CORREÇÃO: Usar diretamente a variável de ambiente
+// O Vite automaticamente carrega .env ou .env.production baseado no comando
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 
 console.log('API Base URL:', API_BASE_URL);
+console.log('Environment:', import.meta.env.MODE);
+
+// Validação para garantir que a URL existe
+if (!API_BASE_URL) {
+  console.warn('VITE_API_URL não está definida nas variáveis de ambiente');
+}
 
 export const api = axios.create({
   baseURL: API_BASE_URL,
@@ -11,16 +18,12 @@ export const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 15000,
-  // CORREÇÃO 2: Configurações para CORS
-  withCredentials: false, // Altere para true se usar cookies/sessions
 });
 
 // Interceptor para requests
 api.interceptors.request.use(
   (config) => {
     console.log(`API Call: ${config.method?.toUpperCase()} ${config.url}`);
-    // CORREÇÃO 3: Adicionar headers para CORS se necessário
-    config.headers['Accept'] = 'application/json';
     return config;
   },
   (error) => {
@@ -39,16 +42,8 @@ api.interceptors.response.use(
     console.error('API Error:', {
       url: error.config?.url,
       status: error.response?.status,
-      message: error.response?.data?.message || error.message,
-      // CORREÇÃO 4: Log mais detalhado para debug de CORS
-      headers: error.response?.headers,
-      data: error.response?.data
+      message: error.response?.data?.message || error.message
     });
-    
-    // CORREÇÃO 5: Tratamento específico para erro de CORS
-    if (error.code === 'NETWORK_ERROR' || error.message.includes('CORS')) {
-      console.error('CORS Error: Verifique a configuração do backend');
-    }
     
     return Promise.reject(error);
   }
